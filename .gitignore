@@ -12,6 +12,11 @@ obj/
 appsettings.Development.json
 *.user
 
+# Local-only: spec-kit workflow state and internal docs, never committed
+.specify/
+specs/
+gateway doc.md
+
 # Editors / OS
 .DS_Store
 Thumbs.db
