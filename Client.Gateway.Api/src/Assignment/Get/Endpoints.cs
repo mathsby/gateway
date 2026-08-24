@@ -16,6 +16,13 @@ public static class Endpoints
     private static IResult GetAssignments(Guid siteId, IAssignmentService assignmentService)
     {
         var assignments = assignmentService.GetAssignments(siteId);
+        if (assignments is null)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Site not found",
+                detail: $"No site exists with id '{siteId}'.");
+        }
         return Results.Ok(assignments);
     }
 }

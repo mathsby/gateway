@@ -4,7 +4,8 @@ namespace Client.Gateway.Api.Assignment.Service;
 
 public interface IAssignmentService
 {
-    IReadOnlyList<AssignmentResponse> GetAssignments(Guid siteId);
+    /// <summary>Returns null when the site is not found.</summary>
+    IReadOnlyList<AssignmentResponse>? GetAssignments(Guid siteId);
 }
 
 /// <summary>
@@ -13,8 +14,16 @@ public interface IAssignmentService
 /// </summary>
 public class AssignmentService : IAssignmentService
 {
-    public IReadOnlyList<AssignmentResponse> GetAssignments(Guid siteId) =>
-        new List<AssignmentResponse>
+    public IReadOnlyList<AssignmentResponse>? GetAssignments(Guid siteId)
+    {
+        // Mock "not found" case: the all-zero GUID simulates an unknown site so
+        // the 404 path is testable. Any other valid GUID returns the same mock data.
+        if (siteId == Guid.Empty)
+        {
+            return null;
+        }
+
+        return new List<AssignmentResponse>
         {
             new(
                 Id: Guid.Parse("11111111-1111-1111-1111-111111111111"),
@@ -38,4 +47,5 @@ public class AssignmentService : IAssignmentService
                 StartDate: new DateOnly(2026, 3, 1),
                 EndDate: null),
         };
+    }
 }

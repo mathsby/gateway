@@ -11,12 +11,22 @@ var builder = WebApplication.CreateBuilder(args);
 // before this goes anywhere near a real environment.
 builder.Services.AddSingleton<IAssignmentService, AssignmentService>();
 
+// Gives every otherwise-empty-bodied error response (unhandled exceptions via
+// UseExceptionHandler, bare status codes via UseStatusCodePages, Results.Problem(...))
+// a consistent application/problem+json body instead of an empty one.
+builder.Services.AddProblemDetails();
+
 // Basic per-IP rate limit so the publicly-reachable mock endpoint can't be hammered.
 // The real gateway enforces rate limits per client credential (see the doc's
 // integration test script args); this is a coarser stand-in for the local scaffold.
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = (context, _) =>
+    {
+        context.HttpContext.Response.Headers["Retry-After"] = "60";
+        return ValueTask.CompletedTask;
+    };
     options.AddPolicy("perIp", httpContext =>
     {
         var key = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
@@ -32,6 +42,11 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+// Order matters: exception handler wraps everything below it; status code pages
+// wraps everything below it (so it can catch the rate limiter's bare 429 and the
+// routing layer's bare 404 for a malformed :guid and give them a JSON body).
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 app.UseRateLimiter();
 
 app.MapGet("/health", () => Results.Ok("healthy"));
