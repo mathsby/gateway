@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: client-gateway-api
+    runtime: docker
+    dockerfilePath: ./Client.Gateway.Api/Dockerfile
+    dockerContext: ./Client.Gateway.Api
+    plan: free
+    healthCheckPath: /health
