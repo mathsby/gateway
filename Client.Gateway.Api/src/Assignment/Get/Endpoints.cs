@@ -1,4 +1,5 @@
 using Client.Gateway.Api.Assignment.Service;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Client.Gateway.Api.Assignment.Get;
 
@@ -8,7 +9,8 @@ public static class Endpoints
     {
         app.MapGet("/sites/{siteId:guid}/assignments", GetAssignments)
             .WithName("GetAssignments")
-            .WithTags("Assignment");
+            .WithTags("Assignment")
+            .RequireRateLimiting("perIp");
     }
 
     private static IResult GetAssignments(Guid siteId, IAssignmentService assignmentService)
