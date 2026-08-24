@@ -6,6 +6,8 @@ Full design docs live under [specs/001-http-client/](specs/001-http-client/) (sp
 
 Grafana dashboard- https://playfulradish138.grafana.net/public-dashboards/d7ec08f103064363a795d079f0dde0a2
 
+Make a 200 GET request in Postman- https://client-gateway-api.onrender.com/sites/00000000-0000-0000-0000-000000000001/assignments
+
 ## Install
 
 ```bash
