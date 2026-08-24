@@ -1,27 +1,15 @@
 {
   "info": {
+    "_postman_id": "222e33dc-f309-4250-aa61-391dfe24acde",
     "name": "Client Gateway - Assignments Functional Tests",
     "description": "Functional checks for GET /sites/{siteId}/assignments: 200 happy path, 404 not-found, and 429 rate-limited - each as a self-contained single-run request (no special Collection Runner iteration count needed). For a full sweep of the rate-limit window across 105 requests, see rate-limit.postman_collection.json instead - keep these two suites separate.\n\nNOTE: the 429 test works by firing 100 warm-up requests from its pre-request script, so it deliberately exhausts this IP's rate-limit budget for the next ~60s. Run the requests in this collection top-to-bottom (200, then 404, then 429) so the earlier two aren't accidentally caught by that warm-up. Also avoid running this back-to-back with rate-limit.postman_collection.json within the same minute, or the 200/404 requests may themselves come back 429 from leftover budget usage.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "18174304",
+    "_collection_link": "https://go.postman.co/collection/18174304-222e33dc-f309-4250-aa61-391dfe24acde?source=collection_link"
   },
-  "variable": [
-    { "key": "baseUrl", "value": "https://client-gateway-api.onrender.com" },
-    { "key": "siteId", "value": "00000000-0000-0000-0000-000000000001" },
-    { "key": "notFoundSiteId", "value": "00000000-0000-0000-0000-000000000000" }
-  ],
   "item": [
     {
-      "name": "200 - GET assignments (happy path)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/sites/{{siteId}}/assignments",
-          "host": ["{{baseUrl}}"],
-          "path": ["sites", "{{siteId}}", "assignments"]
-        }
-      },
-      "response": [],
+      "name": "200 - GET assignments",
       "event": [
         {
           "listen": "test",
@@ -55,20 +43,26 @@
             ]
           }
         }
-      ]
-    },
-    {
-      "name": "404 - GET assignments (unknown site)",
+      ],
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/sites/{{notFoundSiteId}}/assignments",
-          "host": ["{{baseUrl}}"],
-          "path": ["sites", "{{notFoundSiteId}}", "assignments"]
+          "raw": "{{baseUrl}}/sites/{{siteId}}/assignments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sites",
+            "{{siteId}}",
+            "assignments"
+          ]
         }
       },
-      "response": [],
+      "response": []
+    },
+    {
+      "name": "404 - GET assignments",
       "event": [
         {
           "listen": "test",
@@ -95,20 +89,26 @@
             ]
           }
         }
-      ]
-    },
-    {
-      "name": "429 - GET assignments (rate limited)",
+      ],
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/sites/{{siteId}}/assignments",
-          "host": ["{{baseUrl}}"],
-          "path": ["sites", "{{siteId}}", "assignments"]
+          "raw": "{{baseUrl}}/sites/{{notFoundSiteId}}/assignments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sites",
+            "{{notFoundSiteId}}",
+            "assignments"
+          ]
         }
       },
-      "response": [],
+      "response": []
+    },
+    {
+      "name": "429 - GET assignments (rate limited)",
       "event": [
         {
           "listen": "prerequest",
@@ -158,7 +158,37 @@
             ]
           }
         }
-      ]
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/sites/{{siteId}}/assignments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sites",
+            "{{siteId}}",
+            "assignments"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://client-gateway-api.onrender.com"
+    },
+    {
+      "key": "siteId",
+      "value": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "key": "notFoundSiteId",
+      "value": "00000000-0000-0000-0000-000000000000"
     }
   ]
 }
