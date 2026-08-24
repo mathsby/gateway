@@ -17,6 +17,12 @@ appsettings.Development.json
 specs/
 gateway doc.md
 
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
 # Editors / OS
 .DS_Store
 Thumbs.db
