@@ -4,6 +4,9 @@ Runs against the live Render static site by default; override with the
 DOCS_URL env var to test a local file instead, e.g.:
 
     DOCS_URL="file:///C:/GITHUB/gateway/docs/index.html" pytest selenium/tests
+
+Runs headless by default. Set HEADLESS=false to watch it drive a real,
+visible Chrome window instead (useful for demos/debugging).
 """
 
 import os
@@ -16,12 +19,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 DOCS_URL = os.environ.get("DOCS_URL", "https://gateway-api-docs.onrender.com/")
+HEADLESS = os.environ.get("HEADLESS", "true").lower() not in ("false", "0", "no")
 
 
 @pytest.fixture()
 def driver():
     options = Options()
-    options.add_argument("--headless=new")
+    if HEADLESS:
+        options.add_argument("--headless=new")
     options.add_argument("--window-size=1400,1600")
 
     drv = webdriver.Chrome(options=options)
