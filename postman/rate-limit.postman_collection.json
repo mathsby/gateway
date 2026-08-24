@@ -1,0 +1,66 @@
+{
+  "info": {
+    "name": "Client Gateway - Rate Limit Verification",
+    "description": "Verifies the per-IP rate limit on GET /sites/{siteId}/assignments (100 requests/minute, fixed window - see Client.Gateway.Api/Program.cs). Run via Postman's Collection Runner, or newman, with 105 iterations and 0ms delay between requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://client-gateway-api.onrender.com" },
+    { "key": "siteId", "value": "00000000-0000-0000-0000-000000000001" }
+  ],
+  "item": [
+    {
+      "name": "GET assignments (loop to trip rate limit)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/sites/{{siteId}}/assignments",
+          "host": ["{{baseUrl}}"],
+          "path": ["sites", "{{siteId}}", "assignments"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Wrapped in an IIFE: Newman's sandbox re-executes this script in a",
+              "// shared context across iterations, so top-level const/let throws",
+              "// 'already declared' on iteration 2+. An IIFE keeps them scoped.",
+              "(function () {",
+              "    // The API enforces 100 requests/minute per IP with no queueing:",
+              "    // request 101+ within the same 60s window gets rejected immediately.",
+              "    // pm.info.iteration is 0-based, so iterations 0-99 are the first 100",
+              "    // calls (expected to succeed) and iteration 100+ is the 101st+ call",
+              "    // (expected to be rate-limited).",
+              "    const iteration = pm.info.iteration;",
+              "    const overLimit = iteration >= 100;",
+              "",
+              "    if (overLimit) {",
+              "        pm.test('Status is 429 once the limit is exceeded', function () {",
+              "            pm.response.to.have.status(429);",
+              "        });",
+              "        pm.test('Retry-After header is present', function () {",
+              "            pm.response.to.have.header('Retry-After');",
+              "        });",
+              "        pm.test('Body is a problem+json 429, not empty', function () {",
+              "            const contentType = pm.response.headers.get('Content-Type') || '';",
+              "            pm.expect(contentType).to.include('application/problem+json');",
+              "            pm.expect(pm.response.json().status).to.eql(429);",
+              "        });",
+              "    } else {",
+              "        pm.test('Status is 200 while within the limit', function () {",
+              "            pm.response.to.have.status(200);",
+              "        });",
+              "    }",
+              "})();"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
