@@ -22,6 +22,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+selenium/*.png
 
 # Editors / OS
 .DS_Store

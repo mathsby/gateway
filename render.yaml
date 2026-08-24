@@ -15,3 +15,9 @@ services:
         value: http/protobuf
       - key: OTEL_EXPORTER_OTLP_HEADERS
         sync: false # set manually in the Render dashboard — holds the Grafana Cloud access token, do not commit it
+
+  - type: web
+    name: gateway-api-docs
+    runtime: static
+    buildCommand: "echo \"No build needed\""
+    staticPublishPath: ./docs
