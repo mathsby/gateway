@@ -4,6 +4,8 @@ A dependency-free TypeScript HTTP client library for making API calls: common HT
 
 Full design docs live under [specs/001-http-client/](specs/001-http-client/) (spec, plan, research, data model, API contract).
 
+Grafana dashboard- https://playfulradish138.grafana.net/public-dashboards/d7ec08f103064363a795d079f0dde0a2
+
 ## Install
 
 ```bash
