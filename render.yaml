@@ -6,3 +6,12 @@ services:
     dockerContext: ./Client.Gateway.Api
     plan: free
     healthCheckPath: /health
+    envVars:
+      - key: OTEL_SERVICE_NAME
+        value: client-gateway-api
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: https://otlp-gateway-prod-us-west-0.grafana.net/otlp
+      - key: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: http/protobuf
+      - key: OTEL_EXPORTER_OTLP_HEADERS
+        sync: false # set manually in the Render dashboard — holds the Grafana Cloud access token, do not commit it

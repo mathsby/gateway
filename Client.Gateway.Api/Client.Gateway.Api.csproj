@@ -7,4 +7,8 @@
     <RootNamespace>Client.Gateway.Api</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Grafana.OpenTelemetry" Version="1.11.0" />
+  </ItemGroup>
+
 </Project>

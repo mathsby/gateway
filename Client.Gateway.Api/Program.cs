@@ -1,9 +1,18 @@
 using System.Threading.RateLimiting;
 using Client.Gateway.Api.Assignment.Get;
 using Client.Gateway.Api.Assignment.Service;
+using Grafana.OpenTelemetry;
 using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Sends traces, metrics, and logs to Grafana Cloud via OTLP. Endpoint/credentials
+// come from the OTEL_EXPORTER_OTLP_* / OTEL_SERVICE_NAME env vars (set in Render),
+// not from code — see the OpenTelemetry setup guide in the Grafana stack for values.
+builder.Services.AddOpenTelemetry()
+    .WithTracing(configure => configure.UseGrafana())
+    .WithMetrics(configure => configure.UseGrafana());
+builder.Logging.AddOpenTelemetry(options => options.UseGrafana());
 
 // NOTE: Real gateway conventions (Auth0 JWT bearer auth, SiteIdPolicy scope checks on
 // every endpoint) are intentionally omitted from this local scaffold so it's directly
