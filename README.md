@@ -2,7 +2,7 @@
 
 A dependency-free TypeScript HTTP client library for making API calls: common HTTP methods, configurable base URL and default headers, request/response interceptors, per-request timeout, and automatic retry with backoff — all surfaced as structured, catchable errors.
 
-Full design docs live under [specs/001-http-client/](specs/001-http-client/) (spec, plan, research, data model, API contract).
+API Doc on Render- https://gateway-api-docs.onrender.com/
 
 Grafana dashboard- https://playfulradish138.grafana.net/public-dashboards/d7ec08f103064363a795d079f0dde0a2
 
