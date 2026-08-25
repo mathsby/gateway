@@ -8,6 +8,10 @@ Grafana dashboard- https://playfulradish138.grafana.net/public-dashboards/d7ec08
 
 Make a 200 GET request in Postman- https://client-gateway-api.onrender.com/sites/00000000-0000-0000-0000-000000000001/assignments
 
+C# servers are good at handling high load and computationally complex tasks and the compiler serves as a strong line of defense. 
+Python makes for very readable UI tests and any performance hit is negligible.  It also has the most support from selenium.
+JavaScript/typescript for API and contract testing allow for fast and flexible testing with a robust set of tools around it.
+
 ## Install
 
 ```bash
