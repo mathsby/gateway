@@ -1,2 +1,3 @@
 selenium==4.47.0
 pytest==9.1.1
+playwright==1.62.0
