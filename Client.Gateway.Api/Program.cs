@@ -8,6 +8,15 @@ using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Render's containers hit the OS inotify-instance limit when the default config
+// file watcher is enabled, which crashes startup (System.IO.IOException). Rebuild
+// config without reloadOnChange so no FileSystemWatcher is created.
+builder.Configuration.Sources.Clear();
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+        .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
+        .AddEnvironmentVariables();
+
 // Sends traces, metrics, and logs to Grafana Cloud via OTLP. Endpoint/credentials
 // come from the OTEL_EXPORTER_OTLP_* / OTEL_SERVICE_NAME env vars (set in Render),
 // not from code — see the OpenTelemetry setup guide in the Grafana stack for values.
