@@ -1,6 +1,8 @@
 using System.Threading.RateLimiting;
 using Client.Gateway.Api.Assignment.Get;
 using Client.Gateway.Api.Assignment.Service;
+using Client.Gateway.Api.Worker.Get;
+using Client.Gateway.Api.Worker.Service;
 using Grafana.OpenTelemetry;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -19,6 +21,7 @@ builder.Logging.AddOpenTelemetry(options => options.UseGrafana());
 // testable in Postman without a token. See gateway doc.md's Authorization section
 // before this goes anywhere near a real environment.
 builder.Services.AddSingleton<IAssignmentService, AssignmentService>();
+builder.Services.AddSingleton<IWorkerService, WorkerService>();
 
 // Gives every otherwise-empty-bodied error response (unhandled exceptions via
 // UseExceptionHandler, bare status codes via UseStatusCodePages, Results.Problem(...))
@@ -60,5 +63,6 @@ app.UseRateLimiter();
 
 app.MapGet("/health", () => Results.Ok("healthy"));
 app.MapAssignmentEndpoints();
+app.MapWorkerEndpoints();
 
 app.Run();

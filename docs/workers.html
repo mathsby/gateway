@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gateway API Reference</title>
+<title>Workers &middot; Gateway API Reference</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%98%3C/text%3E%3C/svg%3E">
 <style>
   :root {
@@ -521,27 +521,27 @@
 
     <div class="nav-group">
       <div class="nav-label">Resources</div>
-      <a class="nav-link active" href="#assignments"><span class="dot"></span>Assignments</a>
-      <a class="nav-link" href="./workers.html"><span class="dot"></span>Workers</a>
+      <a class="nav-link" href="./index.html"><span class="dot"></span>Assignments</a>
+      <a class="nav-link active" href="#workers"><span class="dot"></span>Workers</a>
       <span class="nav-link disabled"><span class="dot"></span>Sites <span style="margin-left:auto;font-size:11px;">soon</span></span>
     </div>
 
     <div class="nav-group">
-      <div class="nav-label">Assignments</div>
-      <a class="nav-link" href="#get-assignments">Get assignments</a>
+      <div class="nav-label">Workers</div>
+      <a class="nav-link" href="#get-workers">Get workers</a>
       <a class="nav-link" href="#errors">Errors</a>
       <a class="nav-link" href="#rate-limits">Rate limits</a>
     </div>
   </nav>
 
-  <main id="assignments">
-    <p class="eyebrow">Assignments</p>
-    <h1>Get assignments for a site</h1>
-    <p class="lede">Returns every assignment on record for a given site. Each assignment describes one worker's placement — who, what status, and the active date range.</p>
+  <main id="workers">
+    <p class="eyebrow">Workers</p>
+    <h1>Get workers for a site</h1>
+    <p class="lede">Returns every worker on record for a given site. Each worker describes one person staffed at the site — their name, role, and current status.</p>
 
-    <div class="endpoint-bar" id="get-assignments">
+    <div class="endpoint-bar" id="get-workers">
       <span class="method-badge">GET</span>
-      <span class="endpoint-path">/sites/<span class="param">{siteId}</span>/assignments</span>
+      <span class="endpoint-path">/sites/<span class="param">{siteId}</span>/workers</span>
       <span class="rate-chip">100 req/min per caller</span>
     </div>
 
@@ -555,7 +555,7 @@
           <tr>
             <td><span class="param-name">siteId</span><span class="required-tag">required</span></td>
             <td><span class="param-type">uuid</span></td>
-            <td>The site to fetch assignments for.</td>
+            <td>The site to fetch workers for.</td>
           </tr>
         </tbody>
       </table>
@@ -572,7 +572,7 @@
       <div class="lang-panel is-active" data-lang="curl">
         <div class="code-block">
           <button class="copy-btn" type="button">Copy</button>
-          <pre><span class="p">curl</span> https://client-gateway-api.onrender.com/sites/<span class="s">3fa85f64-5717-4562-b3fc-2c963f66afa6</span>/assignments</pre>
+          <pre><span class="p">curl</span> https://client-gateway-api.onrender.com/sites/<span class="s">3fa85f64-5717-4562-b3fc-2c963f66afa6</span>/workers</pre>
         </div>
       </div>
 
@@ -580,9 +580,9 @@
         <div class="code-block">
           <button class="copy-btn" type="button">Copy</button>
           <pre><span class="k">const</span> res = <span class="k">await</span> fetch(
-  <span class="s">`https://client-gateway-api.onrender.com/sites/${siteId}/assignments`</span>
+  <span class="s">`https://client-gateway-api.onrender.com/sites/${siteId}/workers`</span>
 );
-<span class="k">const</span> assignments = <span class="k">await</span> res.json();</pre>
+<span class="k">const</span> workers = <span class="k">await</span> res.json();</pre>
         </div>
       </div>
 
@@ -591,8 +591,8 @@
           <button class="copy-btn" type="button">Copy</button>
           <pre><span class="k">import</span> requests
 
-res = requests.get(<span class="s">f"https://client-gateway-api.onrender.com/sites/{site_id}/assignments"</span>)
-assignments = res.json()</pre>
+res = requests.get(<span class="s">f"https://client-gateway-api.onrender.com/sites/{site_id}/workers"</span>)
+workers = res.json()</pre>
         </div>
       </div>
     </section>
@@ -615,32 +615,29 @@ assignments = res.json()</pre>
           <button class="copy-btn" type="button">Copy</button>
           <pre>[
   {
-    <span class="k">"id"</span><span class="p">:</span> <span class="s">"11111111-1111-1111-1111-111111111111"</span><span class="p">,</span>
+    <span class="k">"id"</span><span class="p">:</span> <span class="s">"44444444-4444-4444-4444-444444444444"</span><span class="p">,</span>
     <span class="k">"siteId"</span><span class="p">:</span> <span class="s">"3fa85f64-5717-4562-b3fc-2c963f66afa6"</span><span class="p">,</span>
-    <span class="k">"employeeName"</span><span class="p">:</span> <span class="s">"Jordan Smith"</span><span class="p">,</span>
-    <span class="k">"status"</span><span class="p">:</span> <span class="s">"Active"</span><span class="p">,</span>
-    <span class="k">"startDate"</span><span class="p">:</span> <span class="s">"2026-01-05"</span><span class="p">,</span>
-    <span class="k">"endDate"</span><span class="p">:</span> <span class="n">null</span>
+    <span class="k">"name"</span><span class="p">:</span> <span class="s">"Jordan Smith"</span><span class="p">,</span>
+    <span class="k">"role"</span><span class="p">:</span> <span class="s">"Electrician"</span><span class="p">,</span>
+    <span class="k">"status"</span><span class="p">:</span> <span class="s">"Active"</span>
   <span class="p">},</span>
   {
-    <span class="k">"id"</span><span class="p">:</span> <span class="s">"22222222-2222-2222-2222-222222222222"</span><span class="p">,</span>
+    <span class="k">"id"</span><span class="p">:</span> <span class="s">"55555555-5555-5555-5555-555555555555"</span><span class="p">,</span>
     <span class="k">"siteId"</span><span class="p">:</span> <span class="s">"3fa85f64-5717-4562-b3fc-2c963f66afa6"</span><span class="p">,</span>
-    <span class="k">"employeeName"</span><span class="p">:</span> <span class="s">"Alex Rivera"</span><span class="p">,</span>
-    <span class="k">"status"</span><span class="p">:</span> <span class="s">"Completed"</span><span class="p">,</span>
-    <span class="k">"startDate"</span><span class="p">:</span> <span class="s">"2025-09-01"</span><span class="p">,</span>
-    <span class="k">"endDate"</span><span class="p">:</span> <span class="s">"2026-02-15"</span>
+    <span class="k">"name"</span><span class="p">:</span> <span class="s">"Alex Rivera"</span><span class="p">,</span>
+    <span class="k">"role"</span><span class="p">:</span> <span class="s">"Site Supervisor"</span><span class="p">,</span>
+    <span class="k">"status"</span><span class="p">:</span> <span class="s">"Active"</span>
   <span class="p">}</span>
 ]</pre>
         </div>
 
         <h3 style="margin-top:20px;">Fields</h3>
         <div class="field-list">
-          <div class="field-row"><span class="fname">id</span><span class="ftype">uuid</span><span class="fdesc">Unique identifier for the assignment.</span></div>
+          <div class="field-row"><span class="fname">id</span><span class="ftype">uuid</span><span class="fdesc">Unique identifier for the worker record.</span></div>
           <div class="field-row"><span class="fname">siteId</span><span class="ftype">uuid</span><span class="fdesc">Echoes the requested site.</span></div>
-          <div class="field-row"><span class="fname">employeeName</span><span class="ftype">string</span><span class="fdesc">Name of the assigned worker.</span></div>
-          <div class="field-row"><span class="fname">status</span><span class="ftype">string</span><span class="fdesc">One of <code class="inline">Active</code>, <code class="inline">Pending</code>, <code class="inline">Completed</code>.</span></div>
-          <div class="field-row"><span class="fname">startDate</span><span class="ftype">date</span><span class="fdesc">First day of the assignment, as <code class="inline">YYYY-MM-DD</code>.</span></div>
-          <div class="field-row"><span class="fname">endDate</span><span class="ftype">date | null</span><span class="fdesc">Last day of the assignment, or <code class="inline">null</code> if still active.</span></div>
+          <div class="field-row"><span class="fname">name</span><span class="ftype">string</span><span class="fdesc">Name of the worker.</span></div>
+          <div class="field-row"><span class="fname">role</span><span class="ftype">string</span><span class="fdesc">The worker's role at the site, e.g. <code class="inline">Electrician</code>.</span></div>
+          <div class="field-row"><span class="fname">status</span><span class="ftype">string</span><span class="fdesc">One of <code class="inline">Active</code>, <code class="inline">OnLeave</code>, <code class="inline">Inactive</code>.</span></div>
         </div>
       </div>
 
@@ -683,7 +680,7 @@ assignments = res.json()</pre>
   </main>
 </div>
 
-<footer>Internal reference for the Gateway API's Assignments resource.</footer>
+<footer>Internal reference for the Gateway API's Workers resource.</footer>
 
 <script>
   (function () {
