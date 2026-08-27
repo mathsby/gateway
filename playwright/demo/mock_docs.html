@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head><title>Gateway API Reference</title></head>
+<body>
+  <header>
+    <span class="method-badge">GET</span>
+    <span class="endpoint-path">/sites/{siteId}/assignments</span>
+  </header>
+
+  <nav>
+    <a class="nav-link active">Assignments</a>
+    <a class="nav-link disabled">Workers</a>
+    <a class="nav-link disabled">Sites</a>
+  </nav>
+
+  <section>
+    <div class="lang-tabs">
+      <button class="lang-tab" data-lang="curl">curl</button>
+      <button class="lang-tab" data-lang="js">js</button>
+      <button class="lang-tab" data-lang="python">python</button>
+    </div>
+    <div class="lang-panel is-active" data-lang="curl">
+      <pre>curl https://client-gateway-api.onrender.com/sites/123/assignments</pre>
+    </div>
+    <div class="lang-panel" data-lang="js">
+      <pre>fetch("https://client-gateway-api.onrender.com/sites/123/assignments")</pre>
+    </div>
+    <div class="lang-panel" data-lang="python">
+      <pre>requests.get("https://client-gateway-api.onrender.com/sites/123/assignments")</pre>
+    </div>
+  </section>
+
+  <section id="rate-limits">
+    <p>Rate limit: 100 requests per minute. Exceeding it returns a 429.</p>
+  </section>
+
+  <script>
+    document.querySelectorAll(".lang-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const lang = tab.getAttribute("data-lang");
+        document.querySelectorAll(".lang-panel").forEach(p => {
+          p.classList.toggle("is-active", p.getAttribute("data-lang") === lang);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
