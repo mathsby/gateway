@@ -57,8 +57,10 @@ def test_sidebar_lists_assignments_as_the_active_resource(page):
     active_link = page.locator(".nav-link.active")
     assert "Assignments" in active_link.text_content()
 
+    workers_link = page.locator(".nav-link", has_text="Workers")
+    assert workers_link.get_attribute("href") == "./workers.html"
+
     disabled_labels = page.locator(".nav-link.disabled").all_text_contents()
-    assert any("Workers" in label for label in disabled_labels)
     assert any("Sites" in label for label in disabled_labels)
 
 
