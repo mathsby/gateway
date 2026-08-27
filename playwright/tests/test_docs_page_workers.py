@@ -9,9 +9,10 @@ Runs headless by default. Set HEADLESS=false to watch it drive a real,
 visible Chrome window instead (useful for demos/debugging).
 
 Traceability: every test records a Playwright trace (screenshots + DOM
-snapshots + sources) to playwright/traces/<test-name>.zip. Open one with:
+snapshots + sources) to playwright/traces/<test-name>.zip. Open one with the
+CLI from the project venv (do NOT use npx):
 
-    playwright show-trace playwright/traces/test_request_language_tabs_switch_content-curl-.zip
+    .venv/Scripts/playwright show-trace playwright/traces/test_request_language_tabs_switch_content_curl.zip
 """
 
 import os
