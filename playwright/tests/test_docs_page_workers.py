@@ -7,11 +7,11 @@ def run(playwright: Playwright) -> None:
     context = browser.new_context()
     page = context.new_page()
     page.goto("https://gateway-api-docs.onrender.com/")
-    page.get_by_role("link", name="Workers").click()
-    page.get_by_text("{siteId}", exact=True).click()
-    page.get_by_role("columnheader", name="Name").click()
-    page.get_by_role("cell", name="siteId required").click()
-    page.get_by_role("button", name="JavaScript").click()
+    page.locator('a.nav-link[href="./workers.html"]').click()
+    page.locator(".endpoint-path .param").click()
+    page.locator(".param-table th", has_text="Name").click()
+    page.locator(".param-table td", has_text="siteId").click()
+    page.locator('.lang-tab[data-lang="js"]').click()
 
     # ---------------------
     context.close()
