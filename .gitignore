@@ -25,6 +25,7 @@ venv/
 .pytest_cache/
 selenium/*.png
 playwright/traces/
+playwright/tests/test_docs_page_workers with comments.py
 
 # Editors / OS
 .DS_Store
