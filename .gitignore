@@ -27,6 +27,12 @@ selenium/*.png
 playwright/traces/
 playwright/tests/test_docs_page_workers with comments.py
 
+# Playwright (TypeScript runner)
+playwright/test-results/
+playwright/playwright-report/
+playwright/blob-report/
+playwright/.cache/
+
 # Editors / OS
 .DS_Store
 Thumbs.db

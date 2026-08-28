@@ -1,0 +1,17 @@
+{
+  "name": "gateway-playwright-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Playwright (TypeScript) tests for the Gateway API reference docs site.",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report",
+    "trace": "playwright show-trace",
+    "postinstall": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.0",
+    "@types/node": "^22.0.0"
+  }
+}
