@@ -39,6 +39,9 @@ playwright/playwright-report/
 playwright/blob-report/
 playwright/.cache/
 
+# Playwright MCP (Claude's live-browser exploration output: screenshots, PDFs, session logs)
+playwright/.mcp-output/
+
 # Editors / OS
 .DS_Store
 Thumbs.db
