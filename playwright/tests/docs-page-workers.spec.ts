@@ -22,12 +22,28 @@ import { activePanels, docsUrl, safeName } from './helpers';
 const DOCS_URL = docsUrl('https://gateway-api-docs.onrender.com/workers.html');
 const TRACE_DIR = path.resolve(__dirname, '..', 'traces');
 
+// Whether *this* beforeEach actually started tracing. Some runners (notably VS
+// Code's Playwright Test extension, when you run/debug via the Testing panel)
+// auto-start tracing on the context themselves before our hook gets a chance,
+// so `context.tracing.start()` below throws "Tracing has been already
+// started." In that case we skip our own stop() too — the running trace isn't
+// ours to stop, and it'll show up in VS Code's own trace viewer instead of
+// playwright/traces/.
+let tracingStartedByUs = false;
+
 test.beforeEach(async ({ page, context }) => {
-  await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
+  tracingStartedByUs = false;
+  try {
+    await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
+    tracingStartedByUs = true;
+  } catch {
+    // Already tracing (see comment above) — nothing to do.
+  }
   await page.goto(DOCS_URL);
 });
 
 test.afterEach(async ({ context }, testInfo) => {
+  if (!tracingStartedByUs) return;
   fs.mkdirSync(TRACE_DIR, { recursive: true });
   const tracePath = path.join(TRACE_DIR, `${safeName(testInfo.title)}.zip`);
   await context.tracing.stop({ path: tracePath });

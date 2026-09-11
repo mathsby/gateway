@@ -1,0 +1,118 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation "API navigation" [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: Gateway API
+        - generic [ref=e6]: Reference · v1
+      - generic [ref=e7]:
+        - generic [ref=e8]: Resources
+        - link "Assignments" [ref=e9] [cursor=pointer]:
+          - /url: "#assignments"
+        - link "Workers" [ref=e11] [cursor=pointer]:
+          - /url: ./workers.html
+        - generic [ref=e13]:
+          - text: Sites
+          - generic [ref=e15]: soon
+      - generic [ref=e16]:
+        - generic [ref=e17]: Assignments
+        - link "Get assignments" [ref=e18] [cursor=pointer]:
+          - /url: "#get-assignments"
+        - link "Errors" [ref=e19] [cursor=pointer]:
+          - /url: "#errors"
+        - link "Rate limits" [ref=e20] [cursor=pointer]:
+          - /url: "#rate-limits"
+    - main [ref=e21]:
+      - paragraph [ref=e22]: Assignments
+      - heading "Get assignments for a site" [level=1] [ref=e23]
+      - paragraph [ref=e24]: Returns every assignment on record for a given site. Each assignment describes one worker's placement — who, what status, and the active date range.
+      - generic [ref=e25]:
+        - generic [ref=e26]: GET
+        - generic [ref=e27]: "/sites/{siteId}/assignments"
+        - generic [ref=e28]: 100 req/min per caller
+      - generic [ref=e29]:
+        - heading "Path parameters" [level=2] [ref=e30]
+        - table [ref=e31]:
+          - rowgroup [ref=e32]:
+            - row [ref=e33]:
+              - columnheader "Name" [ref=e34]
+              - columnheader "Type" [ref=e35]
+              - columnheader "Description" [ref=e36]
+          - rowgroup [ref=e37]:
+            - row [ref=e38]:
+              - cell "siteId required" [ref=e39]:
+                - text: siteId
+                - generic [ref=e40]: required
+              - cell "uuid" [ref=e41]
+              - cell "The site to fetch assignments for." [ref=e42]
+      - generic [ref=e43]:
+        - heading "Request" [level=2] [ref=e44]
+        - tablist "Request language" [ref=e45]:
+          - button "cURL" [ref=e46] [cursor=pointer]
+          - button "JavaScript" [ref=e47] [cursor=pointer]
+          - button "Python" [ref=e48] [cursor=pointer]
+        - generic [ref=e50]:
+          - button "Copy" [ref=e51] [cursor=pointer]
+          - generic [ref=e52]: curl https://client-gateway-api.onrender.com/sites/3fa85f64-5717-4562-b3fc-2c963f66afa6/assignments
+      - generic [ref=e53]:
+        - heading "Response" [level=2] [ref=e54]
+        - tablist "Response status" [ref=e55]:
+          - button "200 OK" [ref=e56] [cursor=pointer]
+          - button "404 Not Found" [ref=e57] [cursor=pointer]
+          - button "429 Too Many Requests" [ref=e58] [cursor=pointer]
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]: Returned when the site exists.
+            - generic [ref=e62]: application/json
+          - generic [ref=e63]:
+            - button "Copy" [ref=e64] [cursor=pointer]
+            - generic [ref=e65]: "[ { \"id\": \"11111111-1111-1111-1111-111111111111\", \"siteId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\", \"employeeName\": \"Jordan Smith\", \"status\": \"Active\", \"startDate\": \"2026-01-05\", \"endDate\": null }, { \"id\": \"22222222-2222-2222-2222-222222222222\", \"siteId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\", \"employeeName\": \"Alex Rivera\", \"status\": \"Completed\", \"startDate\": \"2025-09-01\", \"endDate\": \"2026-02-15\" } ]"
+          - heading "Fields" [level=3] [ref=e66]
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69]: id
+              - generic [ref=e70]: uuid
+              - generic [ref=e71]: Unique identifier for the assignment.
+            - generic [ref=e72]:
+              - generic [ref=e73]: siteId
+              - generic [ref=e74]: uuid
+              - generic [ref=e75]: Echoes the requested site.
+            - generic [ref=e76]:
+              - generic [ref=e77]: employeeName
+              - generic [ref=e78]: string
+              - generic [ref=e79]: Name of the assigned worker.
+            - generic [ref=e80]:
+              - generic [ref=e81]: status
+              - generic [ref=e82]: string
+              - generic [ref=e83]:
+                - text: One of
+                - code [ref=e84]: Active
+                - text: ","
+                - code [ref=e85]: Pending
+                - text: ","
+                - code [ref=e86]: Completed
+                - text: .
+            - generic [ref=e87]:
+              - generic [ref=e88]: startDate
+              - generic [ref=e89]: date
+              - generic [ref=e90]:
+                - text: First day of the assignment, as
+                - code [ref=e91]: YYYY-MM-DD
+                - text: .
+            - generic [ref=e92]:
+              - generic [ref=e93]: endDate
+              - generic [ref=e94]: date | null
+              - generic [ref=e95]:
+                - text: Last day of the assignment, or
+                - code [ref=e96]: "null"
+                - text: if still active.
+      - generic [ref=e97]:
+        - heading "Rate limits" [level=2] [ref=e98]
+        - paragraph [ref=e99]:
+          - text: Each caller (tracked by IP address) may make up to
+          - code [ref=e100]: "100"
+          - text: requests per rolling minute. There is no queueing — the 101st request in a window is rejected immediately with a
+          - code [ref=e101]: "429"
+          - text: and a
+          - code [ref=e102]: Retry-After
+          - text: header telling you how many seconds to wait.
+  - contentinfo [ref=e103]: Internal reference for the Gateway API's Assignments resource.
