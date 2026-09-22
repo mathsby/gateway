@@ -10,7 +10,6 @@ Make a 200 GET request in Postman- https://client-gateway-api.onrender.com/sites
 
 C# servers are good at handling high load and computationally complex tasks and the compiler serves as a strong line of defense. 
 Python makes for very readable UI tests and any performance hit is negligible.  
-It also has the most support from selenium.
 JavaScript/typescript for API and contract testing allow for fast and flexible testing with a robust set of tools around it.
 Playwright tests have been added that include a trace.
 

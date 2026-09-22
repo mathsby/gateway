@@ -23,7 +23,6 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
-selenium/*.png
 playwright/traces/
 playwright/tests/test_docs_page_workers with comments.py
 playwright/tests/trainingdoc.spec.ts
