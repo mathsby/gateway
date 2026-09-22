@@ -1,0 +1,18 @@
+{
+  "name": "gateway-docs-client-pact",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pact consumer contract tests for the two endpoints Client.Gateway.Api exposes (assignments, workers), modelling the Gateway docs site as the consumer.",
+  "scripts": {
+    "test": "vitest run",
+    "publish-pact": "node scripts/publish-pact.mjs"
+  },
+  "devDependencies": {
+    "@pact-foundation/pact": "^17.1.4",
+    "@pact-foundation/pact-cli": "^18.1.2",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.0"
+  }
+}

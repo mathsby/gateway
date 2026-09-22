@@ -42,6 +42,10 @@ playwright/.cache/
 # Playwright MCP (Claude's live-browser exploration output: screenshots, PDFs, session logs)
 playwright/.mcp-output/
 
+# Pact (generated contracts are exchanged via the broker, not committed)
+pact/consumer/pacts/
+pact/consumer/logs/
+
 # Editors / OS
 .DS_Store
 Thumbs.db
