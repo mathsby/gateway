@@ -57,18 +57,8 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      # Poll the heartbeat from the runner rather than using `up --wait`: the
-      # compose healthcheck relies on wget, which the broker image no longer ships.
       - name: Start Pact Broker
-        run: |
-          docker compose -f pact/docker-compose.yml up -d
-          for _ in $(seq 1 60); do
-            curl -sf "$PACT_BROKER_BASE_URL/diagnostic/status/heartbeat" > /dev/null && { echo "Broker is up"; exit 0; }
-            sleep 2
-          done
-          echo "Pact Broker did not become ready" >&2
-          docker compose -f pact/docker-compose.yml logs pact-broker
-          exit 1
+        run: docker compose -f pact/docker-compose.yml up -d --wait
 
       - name: Consumer - generate pacts
         working-directory: pact/consumer
@@ -158,21 +148,14 @@ jobs:
         run: |
           curl -sf --retry 5 --retry-all-errors --max-time 90 "$LIVE_DOCS_URL" -o /dev/null || true
           curl -sf --retry 5 --retry-all-errors --max-time 90 "$LIVE_API_URL/health" -o /dev/null || true
-      # One pytest process per file: each module defines its own session-scoped
-      # sync_playwright() browser fixture, and two of those can't coexist in one
-      # process ("Sync API inside the asyncio loop").
-      - name: Run pytest (assignments page)
-        run: pytest playwright/tests/test_docs_page_assignments.py -v --junitxml=playwright/pytest-assignments.xml
-      - name: Run pytest (workers page)
-        if: success() || failure()
-        run: pytest playwright/tests/test_docs_page_workers.py -v --junitxml=playwright/pytest-workers.xml
+      - run: pytest playwright/tests -v --junitxml=playwright/pytest-results.xml
       - name: Upload results & traces
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-python-report
           path: |
-            playwright/pytest-*.xml
+            playwright/pytest-results.xml
             playwright/traces/
           if-no-files-found: ignore
 
