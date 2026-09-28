@@ -29,7 +29,8 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9292/diagnostic/status/heartbeat"]
+      # The broker image doesn't ship wget/curl, so probe the heartbeat with its own Ruby.
+      test: ["CMD", "ruby", "-rnet/http", "-e", "exit Net::HTTP.get_response(URI('http://localhost:9292/diagnostic/status/heartbeat')).is_a?(Net::HTTPSuccess)"]
       interval: 5s
       timeout: 5s
       retries: 20

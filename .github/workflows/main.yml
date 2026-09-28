@@ -1,18 +1,231 @@
-name: Manual Pipeline
+name: CI
 
 on:
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
 
+# Cancel an in-progress run when a newer commit lands on the same branch/PR.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  DOTNET_VERSION: '10.0.x'
+  API_URL: http://127.0.0.1:5199   # locally started Client.Gateway.Api (Postman + k6 jobs)
+  LIVE_API_URL: https://client-gateway-api.onrender.com
+  LIVE_DOCS_URL: https://gateway-api-docs.onrender.com
+
 jobs:
-  run:
+  # ---------------------------------------------------------------------------
+  # 1. TypeScript HTTP client: typecheck + Vitest unit/integration suite
+  # ---------------------------------------------------------------------------
+  unit:
+    name: Unit & integration (Vitest)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run tests
-        run: npm test
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+  # ---------------------------------------------------------------------------
+  # 2. Contract tests: Pact consumer (TS) -> throwaway broker -> provider (.NET)
+  #    Also runs the rest of Client.Gateway.Api.Tests (WorkerServiceTests).
+  # ---------------------------------------------------------------------------
+  pact:
+    name: Contract tests (Pact) + .NET tests
+    runs-on: ubuntu-latest
+    env:
+      PACT_BROKER_BASE_URL: http://localhost:9292
+      PACT_CONSUMER_VERSION: ${{ github.sha }}
+      PACT_PROVIDER_VERSION: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: pact/consumer/package-lock.json
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Start Pact Broker
+        run: docker compose -f pact/docker-compose.yml up -d --wait
+
+      - name: Consumer - generate pacts
+        working-directory: pact/consumer
+        run: |
+          npm ci
+          npm test
+
+      - name: Consumer - publish pacts to broker
+        working-directory: pact/consumer
+        run: npm run publish-pact
+
+      - name: Provider - verify + .NET unit tests
+        run: >
+          dotnet test Client.Gateway.Api.Tests
+          --logger "trx;LogFileName=results.trx"
+          --results-directory TestResults
+
+      - name: Upload pact files & .NET results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pact-and-dotnet-results
+          path: |
+            pact/consumer/pacts/
+            pact/consumer/logs/
+            TestResults/
+          if-no-files-found: ignore
+
+      - name: Broker logs (on failure)
+        if: failure()
+        run: docker compose -f pact/docker-compose.yml logs pact-broker
+
+      - name: Stop Pact Broker
+        if: always()
+        run: docker compose -f pact/docker-compose.yml down -v
+
+  # ---------------------------------------------------------------------------
+  # 3. UI tests against the live docs site - TypeScript Playwright suite
+  # ---------------------------------------------------------------------------
+  playwright-ts:
+    name: UI tests (Playwright, TypeScript)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: playwright
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: playwright/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Wake Render services (free tier cold start)
+        run: |
+          curl -sf --retry 5 --retry-all-errors --max-time 90 "$LIVE_DOCS_URL" -o /dev/null || true
+          curl -sf --retry 5 --retry-all-errors --max-time 90 "$LIVE_API_URL/health" -o /dev/null || true
+      - run: npx playwright test
+      - name: Upload report & traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-ts-report
+          path: |
+            playwright/playwright-report/
+            playwright/test-results/
+            playwright/traces/
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # 4. UI tests against the live docs site - Python Playwright suite
+  # ---------------------------------------------------------------------------
+  playwright-python:
+    name: UI tests (Playwright, Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: playwright/requirements.txt
+      - run: pip install -r playwright/requirements.txt
+      - run: python -m playwright install --with-deps chromium
+      - name: Wake Render services (free tier cold start)
+        run: |
+          curl -sf --retry 5 --retry-all-errors --max-time 90 "$LIVE_DOCS_URL" -o /dev/null || true
+          curl -sf --retry 5 --retry-all-errors --max-time 90 "$LIVE_API_URL/health" -o /dev/null || true
+      - run: pytest playwright/tests -v --junitxml=playwright/pytest-results.xml
+      - name: Upload results & traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-python-report
+          path: |
+            playwright/pytest-results.xml
+            playwright/traces/
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # 5. API functional + rate-limit tests (Postman/Newman) against this commit's
+  #    API, started locally so results reflect the code under review and don't
+  #    share the live service's per-IP rate-limit budget.
+  # ---------------------------------------------------------------------------
+  postman:
+    name: API tests (Postman / Newman)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - run: npm install -g newman
+      - run: dotnet build Client.Gateway.Api -c Release
+
+      - name: Functional collection (200 / 404 / 429)
+        run: |
+          bash .github/scripts/start-api.sh
+          newman run postman/assignments-functional.postman_collection.json \
+            --env-var "baseUrl=$API_URL" \
+            --reporters cli,junit --reporter-junit-export newman/functional.xml
+
+      # Restart the API so the rate-limit test starts with a fresh 100 req/min window.
+      - name: Rate-limit collection (105 iterations)
+        run: |
+          bash .github/scripts/start-api.sh
+          newman run postman/rate-limit.postman_collection.json \
+            --env-var "baseUrl=$API_URL" -n 105 \
+            --reporters cli,junit --reporter-junit-export newman/rate-limit.xml
+
+      - name: Upload Newman results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-results
+          path: |
+            newman/
+            api.log
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # 6. Performance smoke (k6) against this commit's API, started locally.
+  # ---------------------------------------------------------------------------
+  k6:
+    name: Performance smoke (k6)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: grafana/setup-k6-action@v1
+      - run: dotnet build Client.Gateway.Api -c Release
+      - name: Run k6 (thresholds fail the job)
+        run: |
+          bash .github/scripts/start-api.sh
+          k6 run K6/assignments-200.js -e BASE_URL="$API_URL" --summary-export k6-summary.json
+      - name: Upload k6 summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-summary
+          path: |
+            k6-summary.json
+            api.log
+          if-no-files-found: ignore

@@ -21,20 +21,14 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import pytest
-from playwright.sync_api import Browser, Page, expect, sync_playwright
+from playwright.sync_api import Browser, Page, expect
 
 DOCS_URL = os.environ.get("DOCS_URL", "https://gateway-api-docs.onrender.com/workers.html")
-HEADLESS = os.environ.get("HEADLESS", "true").lower() not in ("false", "0", "no")
 
 TRACE_DIR = Path(__file__).resolve().parent.parent / "traces"
 
 
-@pytest.fixture(scope="session")
-def browser():
-    with sync_playwright() as p:
-        br = p.chromium.launch(headless=HEADLESS, args=["--window-size=1400,1600"])
-        yield br
-        br.close()
+# `browser` fixture: shared, session-scoped, in conftest.py.
 
 
 @pytest.fixture()
