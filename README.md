@@ -55,7 +55,7 @@ client.useRequestInterceptor(async (req) => ({
 }));
 ```
 
-See [specs/001-http-client/quickstart.md](specs/001-http-client/quickstart.md) for the full walkthrough (timeout, retry policy, interceptors) and [specs/001-http-client/contracts/public-api.md](specs/001-http-client/contracts/public-api.md) for the complete API contract.
+See [docs/quickstart.md](docs/quickstart.md) for the full walkthrough (timeout, retry policy, interceptors) and [docs/public-api.md](docs/public-api.md) for the complete API contract.
 
 ## Scripts
 
