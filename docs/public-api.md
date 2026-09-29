@@ -10,7 +10,7 @@ Factory function; the sole way to construct a client (no bare constructor export
 function createClient(config?: ClientConfig): Client;
 ```
 
-- Every field of `ClientConfig` is optional (see [data-model.md](../data-model.md)); calling `createClient()` with no arguments yields a client with no base URL, no default headers, the default timeout (10000ms), and the default retry policy.
+- Every field of `ClientConfig` is optional (see `data-model.md`); calling `createClient()` with no arguments yields a client with no base URL, no default headers, the default timeout (10000ms), and the default retry policy.
 - Throws synchronously if `config.baseUrl` is provided but is not a valid absolute URL.
 
 ## `Client` interface
@@ -59,7 +59,7 @@ class ConfigError extends ClientError { readonly kind: 'config'; }
 
 ## Types re-exported from `index.ts`
 
-`ClientConfig`, `RequestOptions`, `ClientResponse`, `RetryPolicy`, `RequestInterceptor`, `ResponseInterceptor`, `HttpMethod`, `ClientError`, `HttpError`, `TimeoutError`, `NetworkError`, `ParseError`, `ConfigError` — all defined in [data-model.md](../data-model.md).
+`ClientConfig`, `RequestOptions`, `ClientResponse`, `RetryPolicy`, `RequestInterceptor`, `ResponseInterceptor`, `HttpMethod`, `ClientError`, `HttpError`, `TimeoutError`, `NetworkError`, `ParseError`, `ConfigError` — all defined in `data-model.md`.
 
 ## Stability
 

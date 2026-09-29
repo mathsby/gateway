@@ -1,6 +1,6 @@
 # Quickstart: HTTP Client Library
 
-Validates the feature end-to-end against [spec.md](./spec.md)'s acceptance scenarios, using the API defined in [contracts/public-api.md](./contracts/public-api.md).
+Validates the feature end-to-end against `spec.md`'s acceptance scenarios, using the API defined in [public-api.md](./public-api.md).
 
 ## Prerequisites
 
@@ -85,4 +85,4 @@ npm test          # runs the Vitest suite (tests/unit + tests/integration)
 npm run typecheck # tsc --noEmit, validates the public API contract compiles as documented above
 ```
 
-**Expected outcome**: all tests in `tests/unit` and `tests/integration` (see [plan.md](./plan.md) Project Structure) pass, covering every acceptance scenario referenced above.
+**Expected outcome**: all tests in `tests/unit` and `tests/integration` (see `plan.md` Project Structure) pass, covering every acceptance scenario referenced above.
